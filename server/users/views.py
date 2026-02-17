@@ -1,9 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from .serializers import UserRegisterSerializer
 
 class TestAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     #? API to test our DRF setup
     def get(self, request, *args, **kwargs):
         data = {

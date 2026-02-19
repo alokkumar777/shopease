@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { getAllProducts } from "../services/productService";
+import api from "../services/api";
 
-function Home() {
+const Home = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -12,10 +13,19 @@ function Home() {
         setProducts(data);
 			} catch (err) {
 				alert("Failed to load products");
-			}
-		};
+      }
+    };
+    // const fetchCart = async () => {
+    //   try {
+    //     const response = await api.get("orders/cart/");
+    //     console.log("Cart Data:", response.data);
+    //   } catch (error) {
+    //     console.log("Cart Error:", error.response?.data || error.message);
+    //   }
+    // };
 		
-		fetchProducts();
+    fetchProducts();
+    // fetchCart();
 	}, []);
 	
 	return (

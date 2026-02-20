@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { getAllProducts } from "../services/productService";
 import api from "../services/api";
+import { addToCart } from "../services/cartService";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
+  const [loadingId, setLoadingId] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -26,7 +28,19 @@ const Home = () => {
 		
     fetchProducts();
     // fetchCart();
-	}, []);
+  }, []);
+  
+  const handleAddToCart = async (productId) => {
+    setLoadingId(productId);
+    try {
+      await addToCart(productId);
+      alert("Add to cart successfully!")
+    } catch (error) {
+      alert("Could not add to cart. Are you logged in?");
+    } finally {
+      setLoadingId(null);
+    }
+  }
 	
 	return (
     <div>
@@ -37,7 +51,12 @@ const Home = () => {
           <h3>{p.name}</h3>
           <p>{p.description}</p>
           <span>${p.price}</span>
-					<button>Add to Cart</button>
+          <button
+            onClick={() => handleAddToCart(p.id)}
+            disabled={loadingId === p.id}
+          >
+            {loadingId === p.id ? "Adding..." : "Add to cart"}
+          </button>
 					<hr />
         </div>
       ))}

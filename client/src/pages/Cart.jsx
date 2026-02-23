@@ -1,24 +1,42 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
+import { checkout } from "../services/cartService";
 
 const Cart = () => {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  const fetchCart = async () => {
+    try {
+      const response = await api.get("orders/cart/");
+      setCart(response.data);
+    } catch (err) {
+      console.error("Error fetching cart:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const response = await api.get("orders/cart/");
-        setCart(response.data);
-      } catch (err) {
-        console.error("Error fetching cart:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCart();
   }, []);
+
+  const handleCheckout = async () => {
+    if (!window.confirm("Are you sure you want to complete your purchase?"))
+      return;
+
+    setIsCheckingOut(true);
+    try {
+      await checkout();
+      alert("Order placed successfully!");
+      setCart({ items: [], total_price: 0 });
+    } catch (err) {
+      alert("Checkout failed. Please try again.");
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
 
   const calculateTotal = () => {
     if (!cart || !cart.items) return 0;
@@ -65,15 +83,8 @@ const Cart = () => {
 
           <div style={{ marginTop: "20px" }}>
             <h3>Total: ₹{calculateTotal()}</h3>
-            <button
-              style={{
-                padding: "10px 20px",
-                background: "green",
-                color: "white",
-                border: "none",
-              }}
-            >
-              Proceed to Checkout
+            <button onClick={handleCheckout} disabled={isCheckingOut}>
+              {isCheckingOut ? "Processing..." : "Confirm Purchase"}
             </button>
           </div>
         </div>

@@ -30,7 +30,8 @@ const Cart = () => {
     try {
       await checkout();
       alert("Order placed successfully!");
-      setCart({ items: [], total_price: 0 });
+      // setCart({ items: [], total_price: 0 });
+      await fetchCart();
     } catch (err) {
       alert("Checkout failed. Please try again.");
     } finally {

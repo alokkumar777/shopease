@@ -1,67 +1,87 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { getAllProducts } from "../services/productService";
-import api from "../services/api";
 import { addToCart } from "../services/cartService";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
+  const [alertMsg, setAlertMsg] = useState({ type: "", text: "" });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-				const data = await getAllProducts();
-				// console.log("API Data:", data);
+        const data = await getAllProducts();
         setProducts(data);
-			} catch (err) {
-				alert("Failed to load products");
+      } catch (err) {
+        console.error("Failed to load products:", err);
+        setAlertMsg({ type: "danger", text: "Failed to load products" });
       }
     };
-    // const fetchCart = async () => {
-    //   try {
-    //     const response = await api.get("orders/cart/");
-    //     console.log("Cart Data:", response.data);
-    //   } catch (error) {
-    //     console.log("Cart Error:", error.response?.data || error.message);
-    //   }
-    // };
-		
     fetchProducts();
-    // fetchCart();
   }, []);
-  
+
   const handleAddToCart = async (productId) => {
     setLoadingId(productId);
+    setAlertMsg({ type: "", text: "" });
     try {
       await addToCart(productId);
-      alert("Add to cart successfully!")
+      navigate("/cart");
     } catch (error) {
-      alert("Could not add to cart. Are you logged in?");
+      console.error("Could not add to cart:", error);
+      setAlertMsg({ type: "danger", text: "Could not add to cart. Are you logged in?" });
     } finally {
       setLoadingId(null);
     }
-  }
-	
-	return (
+  };
+
+  return (
     <div>
-      <h1>Product List</h1>
-      {products.map((p) => (
-        <div key={p.id}>
-          {/* <img src={p.image} alt={p.name} width="150" /> */}
-          <h3>{p.name}</h3>
-          <p>{p.description}</p>
-          <span>${p.price}</span>
-          <button
-            onClick={() => handleAddToCart(p.id)}
-            disabled={loadingId === p.id}
-          >
-            {loadingId === p.id ? "Adding..." : "Add to cart"}
-          </button>
-					<hr />
+      <h1 className="mb-4 text-center">Featured Products</h1>
+      
+      {alertMsg.text && (
+        <div className={`alert alert-${alertMsg.type} alert-dismissible fade show`} role="alert">
+          {alertMsg.text}
+          <button type="button" className="btn-close" onClick={() => setAlertMsg({ type: "", text: "" })}></button>
         </div>
-      ))}
+      )}
+
+      <div className="row">
+        {products.map((p) => (
+          <div key={p.id} className="col-md-4 col-sm-6 mb-4">
+            <div className="card h-100 shadow-sm border-0 rounded">
+              {/* Optional: <img src={p.image} className="card-img-top" alt={p.name} /> */}
+              <div className="card-body d-flex flex-column">
+                <h5 className="card-title fw-bold">{p.name}</h5>
+                <p className="card-text text-muted flex-grow-1">{p.description}</p>
+                <div className="mt-3">
+                  <span className="h5 fw-bold text-primary">₹{p.price}</span>
+                  <button
+                    onClick={() => handleAddToCart(p.id)}
+                    disabled={loadingId === p.id}
+                    className="btn btn-primary w-100 mt-3 d-flex align-items-center justify-content-center"
+                  >
+                    {loadingId === p.id ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        Adding...
+                      </>
+                    ) : (
+                      "Add to cart"
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      {products.length === 0 && (
+        <p className="text-center text-muted">No products available.</p>
+      )}
     </div>
   );
-}
+};
 
 export default Home;

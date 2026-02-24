@@ -6,6 +6,7 @@ const Cart = () => {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [alertMsg, setAlertMsg] = useState({ type: "", text: "" });
 
   const fetchCart = async () => {
     try {
@@ -13,6 +14,7 @@ const Cart = () => {
       setCart(response.data);
     } catch (err) {
       console.error("Error fetching cart:", err);
+      setAlertMsg({ type: "danger", text: "Failed to load cart items." });
     } finally {
       setLoading(false);
     }
@@ -27,13 +29,14 @@ const Cart = () => {
       return;
 
     setIsCheckingOut(true);
+    setAlertMsg({ type: "", text: "" });
     try {
       await checkout();
-      alert("Order placed successfully!");
-      // setCart({ items: [], total_price: 0 });
+      setAlertMsg({ type: "success", text: "Order placed successfully!" });
       await fetchCart();
     } catch (err) {
-      alert("Checkout failed. Please try again.");
+      console.error("Checkout failed:", err);
+      setAlertMsg({ type: "danger", text: "Checkout failed. Please try again." });
     } finally {
       setIsCheckingOut(false);
     }
@@ -41,52 +44,87 @@ const Cart = () => {
 
   const calculateTotal = () => {
     if (!cart || !cart.items) return 0;
-
     return cart.items
-      .reduce((acc, item) => {
-        return acc + Number(item.product.price) * item.quantity;
-      }, 0)
+      .reduce((acc, item) => acc + Number(item.product.price) * item.quantity, 0)
       .toFixed(2);
   };
 
-  if (loading) return <p>Loading your cart...</p>;
+  if (loading) {
+    return (
+      <div className="text-center mt-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading your cart...</span>
+        </div>
+        <p className="mt-2 text-muted">Loading your cart...</p>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Your Shopping Cart</h1>
+    <div className="container mb-5">
+      <h2 className="mb-4 fw-bold">Your Shopping Cart</h2>
+
+      {alertMsg.text && (
+        <div className={`alert alert-${alertMsg.type} alert-dismissible fade show`} role="alert">
+          {alertMsg.text}
+          <button type="button" className="btn-close" onClick={() => setAlertMsg({ type: "", text: "" })}></button>
+        </div>
+      )}
 
       {!cart || cart.items?.length === 0 ? (
-        <p>Your cart is empty.</p>
+        <div className="text-center py-5 bg-light rounded shadow-sm">
+          <p className="mb-0 text-muted">Your cart is empty.</p>
+        </div>
       ) : (
-        <div>
-          <div className="cart-items">
-            {cart.items.map((item) => (
-              <div
-                key={item.id}
-                style={{ borderBottom: "1px solid #ddd", padding: "10px 0" }}
-              >
-                <h4>{item.product.name}</h4>
-                <p>Quantity: {item.quantity}</p>
-                <div>
-                  <p>price: {item.product.price}</p>
-                  <strong>
-                    <p>
-                      Subtotal: ₹
-                      {(item.product.price * item.quantity).toFixed(2)}
-                    </p>
-                  </strong>
-                </div>
+        <div className="row">
+          <div className="col-md-8">
+            <div className="card shadow-sm border-0 rounded">
+              <div className="list-group list-group-flush">
+                {cart.items.map((item) => (
+                  <div key={item.id} className="list-group-item p-4">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div>
+                        <h5 className="mb-1 fw-bold">{item.product.name}</h5>
+                        <p className="text-muted mb-0 small">Price: ₹{item.product.price}</p>
+                      </div>
+                      <div className="text-end">
+                        <span className="badge bg-light text-dark border p-2 mb-2 d-block">Qty: {item.quantity}</span>
+                        <strong className="text-primary d-block">
+                          ₹{(item.product.price * item.quantity).toFixed(2)}
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
 
-          <hr />
-
-          <div style={{ marginTop: "20px" }}>
-            <h3>Total: ₹{calculateTotal()}</h3>
-            <button onClick={handleCheckout} disabled={isCheckingOut}>
-              {isCheckingOut ? "Processing..." : "Confirm Purchase"}
-            </button>
+          <div className="col-md-4 mt-4 mt-md-0">
+            <div className="card shadow-sm border-0 rounded sticky-top" style={{ top: "1rem" }}>
+              <div className="card-body p-4">
+                <h4 className="card-title mb-4 fw-bold">Order Summary</h4>
+                <div className="d-flex justify-content-between mb-3 h5">
+                  <span className="text-muted">Total</span>
+                  <span className="fw-bold">₹{calculateTotal()}</span>
+                </div>
+                <hr />
+                <button
+                  onClick={handleCheckout}
+                  disabled={isCheckingOut}
+                  className="btn btn-success w-100 py-3 fw-bold d-flex align-items-center justify-content-center"
+                >
+                  {isCheckingOut ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Processing...
+                    </>
+                  ) : (
+                    "Confirm Purchase"
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

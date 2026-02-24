@@ -1,9 +1,11 @@
 import React from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useAuth();
+  const { cartCount } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,8 +43,13 @@ const Navbar = () => {
             {isAuthenticated ? (
               <>
                 <li className="nav-item">
-                  <Link className={`nav-link ${isActive("/cart")}`} to="/cart">
+                  <Link className={`nav-link ${isActive("/cart")} position-relative`} to="/cart">
                     Cart
+                    {cartCount > 0 && (
+                      <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ fontSize: "0.65rem" }}>
+                        {cartCount}
+                      </span>
+                    )}
                   </Link>
                 </li>
                 <li className="nav-item">

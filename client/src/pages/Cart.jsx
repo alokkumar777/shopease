@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
 import { checkout } from "../services/cartService";
+import { useCart } from "../context/CartContext";
 
 const Cart = () => {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [alertMsg, setAlertMsg] = useState({ type: "", text: "" });
+  const { fetchCartCount } = useCart();
 
   const fetchCart = async () => {
     try {
@@ -33,6 +35,7 @@ const Cart = () => {
     try {
       await checkout();
       setAlertMsg({ type: "success", text: "Order placed successfully!" });
+      await fetchCartCount();
       await fetchCart();
     } catch (err) {
       console.error("Checkout failed:", err);

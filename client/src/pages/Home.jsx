@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllProducts } from "../services/productService";
 import { addToCart } from "../services/cartService";
+import { useCart } from "../context/CartContext";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
   const [alertMsg, setAlertMsg] = useState({ type: "", text: "" });
   const navigate = useNavigate();
+  const { fetchCartCount } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -27,6 +29,7 @@ const Home = () => {
     setAlertMsg({ type: "", text: "" });
     try {
       await addToCart(productId);
+      await fetchCartCount();
       navigate("/cart");
     } catch (error) {
       console.error("Could not add to cart:", error);
@@ -51,7 +54,14 @@ const Home = () => {
         {products.map((p) => (
           <div key={p.id} className="col-md-4 col-sm-6 mb-4">
             <div className="card h-100 shadow-sm border-0 rounded">
-              {/* Optional: <img src={p.image} className="card-img-top" alt={p.name} /> */}
+              {p.image && (
+                <img
+                  src={`http://127.0.0.1:8000${p.image}`}
+                  alt={p.name}
+                  className="card-img-top"
+                  style={{ height: "200px", objectFit: "cover" }}
+                />
+              )}
               <div className="card-body d-flex flex-column">
                 <h5 className="card-title fw-bold">{p.name}</h5>
                 <p className="card-text text-muted flex-grow-1">{p.description}</p>

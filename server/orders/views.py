@@ -22,7 +22,10 @@ class CartAPIView(APIView):
         return Response(serializer.data)
     
     def post(self, request):
-        cart, created = Cart.objects.get_or_create(user = request.user)
+        cart, created = Cart.objects.get_or_create(
+            user = request.user,
+            is_active = True
+        )
 
         product_id = request.data.get("product_id")
         quantity = int(request.data.get("quantity", 1))

@@ -3,7 +3,7 @@ from django.conf import settings
 from products.models import Product
 
 class Cart(models.Model):
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="carts"

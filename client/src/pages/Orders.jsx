@@ -31,42 +31,73 @@ const Orders = () => {
   }
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 page-enter">
       <h2 className="mb-4">Order History</h2>
       {orders.length === 0 ? (
-        <div className="alert alert-info">No orders yet.</div>
+        <div className="text-center py-5">
+          <h4 className="text-muted mb-3">No orders yet</h4>
+          <p className="text-muted">You haven't placed any orders yet.</p>
+          <a href="/" className="btn btn-primary mt-2">
+            Browse Products
+          </a>
+        </div>
       ) : (
         orders.map((order) => (
-          <div key={order.id} className="card mb-4 shadow-sm">
-            <div className="card-body">
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5 className="mb-0">Order #{order.id}</h5>
-                <span
-                  className={`badge ${
-                    order.status === "completed"
-                      ? "bg-success"
-                      : order.status === "pending"
-                      ? "bg-warning text-dark"
-                      : "bg-secondary"
-                  }`}
-                >
-                  {order.status.toUpperCase()}
-                </span>
+          <div
+            key={order.id}
+            className="card mb-4 shadow-sm card-hover overflow-hidden"
+          >
+            <div className="card-header bg-white py-3 border-0">
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 className="text-muted mb-1 small">ORDER ID</h6>
+                  <h5 className="mb-0">#{order.id}</h5>
+                </div>
+                <div className="text-end">
+                  <h6 className="text-muted mb-1 small">STATUS</h6>
+                  <span
+                    className={`badge rounded-pill px-3 py-2 ${
+                      order.status === "completed"
+                        ? "bg-success"
+                        : order.status === "pending"
+                          ? "bg-warning text-dark"
+                          : "bg-secondary"
+                    }`}
+                  >
+                    {order.status.toUpperCase()}
+                  </span>
+                </div>
               </div>
-
-              <p className="text-muted small">
+            </div>
+            <div className="card-body p-0">
+              <div className="px-4 py-2 bg-light small text-muted">
                 Placed on: {new Date(order.created_at).toLocaleString()}
-              </p>
-
-              <ul className="list-group mb-3">
+              </div>
+              <ul className="list-group list-group-flush">
                 {order.order_items.map((item) => (
                   <li
                     key={item.id}
-                    className="list-group-item d-flex justify-content-between align-items-center"
+                    className="list-group-item d-flex justify-content-between align-items-center py-3 border-0 border-bottom mx-3 px-0"
                   >
-                    <div>
-                      <strong>{item.product.name}</strong>
-                      <div className="text-muted small">Qty: {item.quantity}</div>
+                    <div className="d-flex align-items-center">
+                      {item.product.image && (
+                        <img
+                          src={item.product.image}
+                          alt={item.product.name}
+                          className="rounded me-3 shadow-sm"
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            objectFit: "cover",
+                          }}
+                        />
+                      )}
+                      <div>
+                        <h6 className="mb-0">{item.product.name}</h6>
+                        <div className="text-muted small">
+                          Qty: {item.quantity} x ₹{item.price_at_purchase}
+                        </div>
+                      </div>
                     </div>
                     <span className="fw-bold">
                       ₹{item.price_at_purchase * item.quantity}
@@ -74,10 +105,12 @@ const Orders = () => {
                   </li>
                 ))}
               </ul>
-
-              <div className="text-end fw-bold fs-5">
-                Total: ₹{order.total_price}
-              </div>
+            </div>
+            <div className="card-footer bg-white py-3 border-0 text-end">
+              <span className="text-muted me-2">Grand Total:</span>
+              <span className="h4 mb-0 text-primary fw-bold">
+                ₹{order.total_price}
+              </span>
             </div>
           </div>
         ))
@@ -87,3 +120,5 @@ const Orders = () => {
 };
 
 export default Orders;
+
+// export default Orders;

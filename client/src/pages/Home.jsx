@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { getAllProducts } from "../services/productService";
 import { addToCart } from "../services/cartService";
 import { useCart } from "../context/CartContext";
+import ToastMessage from "../components/ToastMessage";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
-  const [alertMsg, setAlertMsg] = useState({ type: "", text: "" });
+  const [toast, setToast] = useState({ show: false, message: "", type: "success" });
   const navigate = useNavigate();
   const { fetchCartCount } = useCart();
 
@@ -18,7 +19,7 @@ const Home = () => {
         setProducts(data);
       } catch (err) {
         console.error("Failed to load products:", err);
-        setAlertMsg({ type: "danger", text: "Failed to load products" });
+        setToast({ show: true, message: "Failed to load products", type: "danger" });
       }
     };
     fetchProducts();
@@ -26,51 +27,51 @@ const Home = () => {
 
   const handleAddToCart = async (productId) => {
     setLoadingId(productId);
-    setAlertMsg({ type: "", text: "" });
     try {
       await addToCart(productId);
       await fetchCartCount();
-      navigate("/cart");
+      setToast({ show: true, message: "Product added to cart!", type: "success" });
     } catch (error) {
       console.error("Could not add to cart:", error);
-      setAlertMsg({ type: "danger", text: "Could not add to cart. Are you logged in?" });
+      setToast({ show: true, message: "Could not add to cart. Please login.", type: "danger" });
     } finally {
       setLoadingId(null);
     }
   };
 
   return (
-    <div>
-      <h1 className="mb-4 text-center">Featured Products</h1>
-      
-      {alertMsg.text && (
-        <div className={`alert alert-${alertMsg.type} alert-dismissible fade show`} role="alert">
-          {alertMsg.text}
-          <button type="button" className="btn-close" onClick={() => setAlertMsg({ type: "", text: "" })}></button>
-        </div>
-      )}
+    <div className="page-enter">
+      <ToastMessage 
+        show={toast.show} 
+        message={toast.message} 
+        type={toast.type} 
+        onClose={() => setToast({ ...toast, show: false })} 
+      />
+      <h1 className="mb-5 text-center">Featured Products</h1>
 
       <div className="row">
         {products.map((p) => (
-          <div key={p.id} className="col-md-4 col-sm-6 mb-4">
-            <div className="card h-100 shadow-sm border-0 rounded">
+          <div key={p.id} className="col-lg-4 col-md-6 mb-4">
+            <div className="card h-100 shadow-sm card-hover">
               {p.image && (
                 <img
                   src={`${p.image}`}
                   alt={p.name}
-                  className="card-img-top"
-                  style={{ height: "200px", objectFit: "cover" }}
+                  className="card-img-top product-image"
                 />
               )}
               <div className="card-body d-flex flex-column">
-                <h5 className="card-title fw-bold">{p.name}</h5>
-                <p className="card-text text-muted flex-grow-1">{p.description}</p>
+                <h5 className="card-title">{p.name}</h5>
+                <p className="card-text text-muted flex-grow-1 text-truncate-3">{p.description}</p>
                 <div className="mt-3">
-                  <span className="h5 fw-bold text-primary">₹{p.price}</span>
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <span className="h4 mb-0 text-primary">₹{p.price}</span>
+                    <span className="badge bg-light text-dark border">Free Delivery</span>
+                  </div>
                   <button
                     onClick={() => handleAddToCart(p.id)}
                     disabled={loadingId === p.id}
-                    className="btn btn-primary w-100 mt-3 d-flex align-items-center justify-content-center"
+                    className="btn btn-primary w-100 d-flex align-items-center justify-content-center"
                   >
                     {loadingId === p.id ? (
                       <>
@@ -78,7 +79,7 @@ const Home = () => {
                         Adding...
                       </>
                     ) : (
-                      "Add to cart"
+                      "Add to Cart"
                     )}
                   </button>
                 </div>
@@ -87,8 +88,16 @@ const Home = () => {
           </div>
         ))}
       </div>
-      {products.length === 0 && (
-        <p className="text-center text-muted">No products available.</p>
+      {products.length === 0 && !toast.show && (
+        <div className="text-center py-5">
+          <div className="spinner-border text-primary"></div>
+          <p className="mt-3 text-muted">Loading products...</p>
+        </div>
+      )}
+      {products.length === 0 && toast.show && toast.type === "danger" && (
+        <div className="text-center py-5">
+          <p className="text-danger">Failed to load products. Please refresh the page.</p>
+        </div>
       )}
     </div>
   );

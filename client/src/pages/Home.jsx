@@ -56,7 +56,7 @@ const Home = () => {
             <div className="card h-100 shadow-sm border-0 rounded">
               {p.image && (
                 <img
-                  src={`http://127.0.0.1:8000${p.image}`}
+                  src={`${p.image}`}
                   alt={p.name}
                   className="card-img-top"
                   style={{ height: "200px", objectFit: "cover" }}

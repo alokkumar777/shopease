@@ -53,6 +53,11 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li className="nav-item">
+                  <Link className={`nav-link ${isActive("/orders")}`} to="/orders">
+                    Orders
+                  </Link>
+                </li>
+                <li className="nav-item">
                   <button
                     onClick={handleLogout}
                     className="btn btn-outline-danger btn-sm ms-lg-2 mt-2 mt-lg-0"

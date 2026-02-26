@@ -18,7 +18,7 @@ class CartAPIView(APIView):
             user = user,
             is_active = True
         )
-        serializer = CartSerializer(cart)
+        serializer = CartSerializer(cart, context={'request': request})
         return Response(serializer.data)
     
     def post(self, request):
@@ -42,7 +42,7 @@ class CartAPIView(APIView):
             cart_item.quantity = quantity
         cart_item.save()
 
-        serializer = CartSerializer(cart)
+        serializer = CartSerializer(cart, context={'request': request})
         return Response(serializer.data)
     
 

@@ -32,6 +32,11 @@ const Login = () => {
     }
   };
 
+  const handleFillDemo = () => {
+    setUsername("coder123");
+    setPassword("12345");
+  };
+
   return (
     <div className="row justify-content-center mt-5 page-enter">
       <div className="col-md-5 col-lg-4">
@@ -44,6 +49,17 @@ const Login = () => {
         <div className="card shadow-sm">
           <div className="card-body p-5">
             <h3 className="card-title text-center mb-4">Login</h3>
+
+            <div 
+              className="alert alert-info py-2 small mb-4" 
+              style={{ cursor: "pointer" }}
+              onClick={handleFillDemo}
+              title="Click to auto-fill"
+            >
+              <strong>Demo Credentials:</strong> (Click to fill)<br />
+              Username: <code>coder123</code><br />
+              Password: <code>12345</code>
+            </div>
 
             <form onSubmit={handleSubmit}>
               <div className="mb-3">

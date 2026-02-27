@@ -34,31 +34,33 @@ const Login = () => {
 
   const handleFillDemo = () => {
     setUsername("coder123");
-    setPassword("12345");
+    setPassword("teri_maa_ka_cute_damaad");
   };
 
   return (
     <div className="row justify-content-center mt-5 page-enter">
       <div className="col-md-5 col-lg-4">
-        <ToastMessage 
-          show={toast.show} 
-          message={toast.message} 
-          type={toast.type} 
-          onClose={() => setToast({ ...toast, show: false })} 
+        <ToastMessage
+          show={toast.show}
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({ ...toast, show: false })}
         />
         <div className="card shadow-sm">
           <div className="card-body p-5">
             <h3 className="card-title text-center mb-4">Login</h3>
 
-            <div 
-              className="alert alert-info py-2 small mb-4" 
+            <div
+              className="alert alert-info py-2 small mb-4"
               style={{ cursor: "pointer" }}
               onClick={handleFillDemo}
               title="Click to auto-fill"
             >
-              <strong>Demo Credentials:</strong> (Click to fill)<br />
-              Username: <code>coder123</code><br />
-              Password: <code>12345</code>
+              <strong>Demo Credentials:</strong> (Click to fill)
+              <br />
+              Username: <code>coder123</code>
+              <br />
+              Password: <code>teri_maa_ka_cute_damaad</code>
             </div>
 
             <form onSubmit={handleSubmit}>
@@ -84,14 +86,18 @@ const Login = () => {
                   required
                 />
               </div>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="btn btn-primary w-100 py-2 d-flex align-items-center justify-content-center"
                 disabled={loading}
               >
                 {loading ? (
                   <>
-                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
                     Logging in...
                   </>
                 ) : (

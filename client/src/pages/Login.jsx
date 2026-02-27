@@ -60,7 +60,7 @@ const Login = () => {
               <br />
               Username: <code>coder123</code>
               <br />
-              Password: <code>teri_maa_ka_cute_damaad</code>
+              Password: <code>S@3erQ#65derdDsrDFf</code>
             </div>
 
             <form onSubmit={handleSubmit}>

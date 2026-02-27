@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { getAllProducts } from "../services/productService";
 import { addToCart } from "../services/cartService";
 import { useCart } from "../context/CartContext";
@@ -8,8 +7,11 @@ import ToastMessage from "../components/ToastMessage";
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
-  const [toast, setToast] = useState({ show: false, message: "", type: "success" });
-  const navigate = useNavigate();
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success",
+  });
   const { fetchCartCount } = useCart();
 
   useEffect(() => {
@@ -19,7 +21,11 @@ const Home = () => {
         setProducts(data);
       } catch (err) {
         console.error("Failed to load products:", err);
-        setToast({ show: true, message: "Failed to load products", type: "danger" });
+        setToast({
+          show: true,
+          message: "Failed to load products",
+          type: "danger",
+        });
       }
     };
     fetchProducts();
@@ -30,10 +36,18 @@ const Home = () => {
     try {
       await addToCart(productId);
       await fetchCartCount();
-      setToast({ show: true, message: "Product added to cart!", type: "success" });
+      setToast({
+        show: true,
+        message: "Product added to cart!",
+        type: "success",
+      });
     } catch (error) {
       console.error("Could not add to cart:", error);
-      setToast({ show: true, message: "Could not add to cart. Please login.", type: "danger" });
+      setToast({
+        show: true,
+        message: "Could not add to cart. Please login.",
+        type: "danger",
+      });
     } finally {
       setLoadingId(null);
     }
@@ -41,11 +55,11 @@ const Home = () => {
 
   return (
     <div className="page-enter">
-      <ToastMessage 
-        show={toast.show} 
-        message={toast.message} 
-        type={toast.type} 
-        onClose={() => setToast({ ...toast, show: false })} 
+      <ToastMessage
+        show={toast.show}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast({ ...toast, show: false })}
       />
       <h1 className="mb-5 text-center">Featured Products</h1>
 
@@ -62,11 +76,15 @@ const Home = () => {
               )}
               <div className="card-body d-flex flex-column">
                 <h5 className="card-title">{p.name}</h5>
-                <p className="card-text text-muted flex-grow-1 text-truncate-3">{p.description}</p>
+                <p className="card-text text-muted flex-grow-1 text-truncate-3">
+                  {p.description}
+                </p>
                 <div className="mt-3">
                   <div className="d-flex justify-content-between align-items-center mb-3">
                     <span className="h4 mb-0 text-primary">₹{p.price}</span>
-                    <span className="badge bg-light text-dark border">Free Delivery</span>
+                    <span className="badge bg-light text-dark border">
+                      Free Delivery
+                    </span>
                   </div>
                   <button
                     onClick={() => handleAddToCart(p.id)}
@@ -75,7 +93,11 @@ const Home = () => {
                   >
                     {loadingId === p.id ? (
                       <>
-                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
                         Adding...
                       </>
                     ) : (
@@ -96,7 +118,9 @@ const Home = () => {
       )}
       {products.length === 0 && toast.show && toast.type === "danger" && (
         <div className="text-center py-5">
-          <p className="text-danger">Failed to load products. Please refresh the page.</p>
+          <p className="text-danger">
+            Failed to load products. Please refresh the page.
+          </p>
         </div>
       )}
     </div>

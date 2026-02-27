@@ -13,6 +13,18 @@ export const addToCart = async (productId, quantity = 1) => {
   }
 };
 
+export const removeFromCart = async (cartItemId) => {
+  try {
+    const response = await api.delete("orders/cart/", {
+      data: { cart_item_id: cartItemId },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Remove from Cart Error:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
 export const checkout = async () => {
   try {
     const response = await api.post("orders/checkout/");

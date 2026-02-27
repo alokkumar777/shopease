@@ -45,6 +45,18 @@ class CartAPIView(APIView):
         serializer = CartSerializer(cart, context={'request': request})
         return Response(serializer.data)
     
+    def delete(self, request):
+        cart_item_id = request.data.get("cart_item_id")
+        if not cart_item_id:
+            return Response({"error": "cart_item_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            cart_item = CartItem.objects.get(id=cart_item_id, cart__user=request.user, cart__is_active=True)
+            cart_item.delete()
+            return Response({"message": "Item removed from cart"}, status=status.HTTP_200_OK)
+        except CartItem.DoesNotExist:
+            return Response({"error": "Item not found in your cart"}, status=status.HTTP_404_NOT_FOUND)
+    
 
 class CheckoutAPIView(APIView):
     permission_classes = [IsAuthenticated]

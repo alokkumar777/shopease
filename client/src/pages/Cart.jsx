@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
-import { checkout } from "../services/cartService";
+import { checkout, removeFromCart } from "../services/cartService";
 import { useCart } from "../context/CartContext";
 import ToastMessage from "../components/ToastMessage";
 
@@ -34,6 +34,26 @@ const Cart = () => {
   useEffect(() => {
     fetchCart();
   }, []);
+
+  const handleRemoveItem = async (cartItemId) => {
+    try {
+      await removeFromCart(cartItemId);
+      setToast({
+        show: true,
+        message: "Item removed from cart.",
+        type: "info",
+      });
+      await fetchCartCount();
+      await fetchCart();
+    } catch (err) {
+      console.error("Remove failed:", err);
+      setToast({
+        show: true,
+        message: "Failed to remove item. Please try again.",
+        type: "danger",
+      });
+    }
+  };
 
   const handleCheckout = async () => {
     setIsCheckingOut(true);
@@ -126,6 +146,12 @@ const Cart = () => {
                           <p className="text-muted small mb-0">
                             Unit Price: ₹{item.product.price}
                           </p>
+                          <button
+                            className="btn btn-link btn-sm text-danger p-0 mt-2 text-decoration-none"
+                            onClick={() => handleRemoveItem(item.id)}
+                          >
+                            Remove
+                          </button>
                         </div>
                       </div>
                       <div className="text-end">

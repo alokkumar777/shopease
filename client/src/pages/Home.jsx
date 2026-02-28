@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { getAllProducts } from "../services/productService";
 import { addToCart } from "../services/cartService";
 import { useCart } from "../context/CartContext";
@@ -67,15 +68,19 @@ const Home = () => {
         {products.map((p) => (
           <div key={p.id} className="col-6 col-md-6 col-lg-4 mb-3 mb-md-4">
             <div className="card h-100 shadow-sm card-hover">
-              {p.image && (
-                <img
-                  src={`${p.image}`}
-                  alt={p.name}
-                  className="card-img-top product-image"
-                />
-              )}
+              <Link to={`/products/${p.id}`} className="text-decoration-none">
+                {p.image && (
+                  <img
+                    src={`${p.image}`}
+                    alt={p.name}
+                    className="card-img-top product-image"
+                  />
+                )}
+              </Link>
               <div className="card-body d-flex flex-column p-2 p-md-3">
-                <h5 className="card-title mb-2">{p.name}</h5>
+                <Link to={`/products/${p.id}`} className="text-decoration-none">
+                  <h5 className="card-title mb-2 text-dark">{p.name}</h5>
+                </Link>
                 <p className="card-text text-muted flex-grow-1 text-truncate-3 d-none d-md-block">
                   {p.description}
                 </p>
@@ -126,5 +131,6 @@ const Home = () => {
     </div>
   );
 };
+
 
 export default Home;

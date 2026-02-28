@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Cart from "./pages/Cart";
 import Orders from "./pages/Orders";
+import ProductDetail from "./pages/ProductDetail";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
@@ -19,6 +20,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/products/:id" element={<ProductDetail />} />
               <Route
                 path="/cart"
                 element={

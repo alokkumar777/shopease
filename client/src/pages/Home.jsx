@@ -63,9 +63,9 @@ const Home = () => {
       />
       <h1 className="mb-5 text-center">Featured Products</h1>
 
-      <div className="row">
+      <div className="row g-3 g-md-4">
         {products.map((p) => (
-          <div key={p.id} className="col-lg-4 col-md-6 mb-4">
+          <div key={p.id} className="col-6 col-md-6 col-lg-4 mb-3 mb-md-4">
             <div className="card h-100 shadow-sm card-hover">
               {p.image && (
                 <img
@@ -74,22 +74,22 @@ const Home = () => {
                   className="card-img-top product-image"
                 />
               )}
-              <div className="card-body d-flex flex-column">
-                <h5 className="card-title">{p.name}</h5>
-                <p className="card-text text-muted flex-grow-1 text-truncate-3">
+              <div className="card-body d-flex flex-column p-2 p-md-3">
+                <h5 className="card-title mb-2">{p.name}</h5>
+                <p className="card-text text-muted flex-grow-1 text-truncate-3 d-none d-md-block">
                   {p.description}
                 </p>
-                <div className="mt-3">
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <span className="h4 mb-0 text-primary">₹{p.price}</span>
-                    <span className="badge bg-light text-dark border">
+                <div className="mt-auto">
+                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-2 mb-md-3">
+                    <span className="h5 mb-1 mb-md-0 text-primary">₹{p.price}</span>
+                    <span className="badge bg-light text-dark border d-none d-sm-inline-block">
                       Free Delivery
                     </span>
                   </div>
                   <button
                     onClick={() => handleAddToCart(p.id)}
                     disabled={loadingId === p.id}
-                    className="btn btn-primary w-100 d-flex align-items-center justify-content-center"
+                    className="btn btn-primary w-100 d-flex align-items-center justify-content-center btn-sm-mobile"
                   >
                     {loadingId === p.id ? (
                       <>
